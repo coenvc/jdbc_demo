@@ -2,7 +2,7 @@ package com.company;
 
 import java.sql.ResultSet;
 import java.sql.*;
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Properties;
 
 /**
@@ -29,16 +29,16 @@ public class Database {
 
     //connect database
 
-    public Connection connect() {
-        if (connection == null) {
-            try {
-                connection = DriverManager.getConnection(dbUrl, getProperties());
-            } catch (SQLException e) {
-                e.printStackTrace();
+            public static Connection connect(){
+                try {
+                    Class.forName("com.mysql.cj.jdbc.Driver");
+                    return DriverManager.getConnection("jdbc:mysql://localhost:3306/Company?autoReconnect=true&useSSL=false&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC","root","root");
+                } catch(Exception e){}
+
+                return null;
             }
-        }
-        return connection;
-    }
+
+
 
     public void disconnect() {
         if (connection != null) {
@@ -90,7 +90,6 @@ public class Database {
                 employee = new Employee(user_id,name,surname,email);
             }
 
-
         }
 
         catch (SQLException ex) {
@@ -102,18 +101,72 @@ public class Database {
         return employee;
     }
 
+    public ArrayList<Employee> getEmployees(){
+        ArrayList<Employee> employeeList = new ArrayList<Employee>();
+        String sql = "Select * from employee";
+        Employee employee = null;
+        try {
+            PreparedStatement preparedStatement = this.connect().prepareStatement(sql);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                String name =   resultSet.getString("name");
+                String surname = resultSet.getNString("surname");
+                String email = resultSet.getNString("email");
+                int user_id = resultSet.getInt("id");
+
+                employee = new Employee(user_id,name,surname,email);
+                employeeList.add(employee);
+            }
+        }
+
+        catch (SQLException ex) {
+            System.out.println(ex.getMessage());
+        }
+        finally {
+            disconnect();
+        }
+        return employeeList;
+    }
+
+    public void delete(int id) {
+        String sql = "delete from employee where id  = ?";
+
+        try {
+            PreparedStatement preparedStatement = this.connect().prepareStatement(sql);
+            preparedStatement.setInt(1, id);
+
+            preparedStatement.executeUpdate();
+        }
+        catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        finally {
+            disconnect();
+        }
+    }
+    public void update(Employee employee,int id) {
+        String sql = "update employee set name = ?, surname = ?, email = ? where id = ?";
+
+        try {
+            PreparedStatement preparedStatement = this.connect().prepareStatement(sql);
+            preparedStatement.setString(1, employee.getName());
+            preparedStatement.setString(2,employee.getSurname());
+            preparedStatement.setString(3,employee.getEmail());
+            preparedStatement.setInt(4,id);
+
+            preparedStatement.executeUpdate();
+        }
+        catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        finally {
+            disconnect();
+        }
+    }
+
 
 }
-
-
-
-//    //deletes an employee from the database
-//    public void deleteEmployee(int id){}
-//    //updates the values of an existing employee
-//    public void updateEmployee(Employee employee){}
-//    //retrieves an employee from the database with the given Id
-//    public Employee getEmployeeByid(int id){}
-//    //retrieves a list of every employee in the database
-//    public List<Employee> getAllEmployees(){}
 
 

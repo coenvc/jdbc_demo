@@ -1,8 +1,5 @@
 package com.company;
 
-/**
- * Created by coenv on 22-2-2017.
- */
 public class Employee {
     private int Id;
     private String name;
@@ -22,6 +19,7 @@ public class Employee {
         this.email = email;
     }
 
+    //region Getters and Setters
     public int getId() {
         return Id;
     }
@@ -53,6 +51,7 @@ public class Employee {
     public void setEmail(String email) {
         this.email = email;
     }
+    //endregion
 
     @Override
     public String toString() {
