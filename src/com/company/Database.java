@@ -31,9 +31,11 @@ public class Database {
 
             public static Connection connect(){
                 try {
-                    Class.forName("com.mysql.cj.jdbc.Driver");
-                    return DriverManager.getConnection("jdbc:mysql://localhost:3306/Company?autoReconnect=true&useSSL=false&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC","root","root");
-                } catch(Exception e){}
+//                    Class.forName("com.mysql.cj.jdbc.Driver");
+                    return DriverManager.getConnection("jdbc:mysql://studmysql01.fhict.local/dbi339814?autoReconnect=true&useSSL=false&useUnicode=true" ,"dbi339814","Mypassword123");
+                } catch(Exception e){
+                    e.printStackTrace();
+                }
 
                 return null;
             }
